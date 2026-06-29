@@ -39,23 +39,49 @@ Destination (MapKit search) ─▶ route (OSRM) ─▶ off-screen render (MapLib
 - **Security framework** (RSA-1024) + **CommonCrypto** (AES-256) for the dash handshake
 - **CoreLocation** background mode keeps streaming alive with the screen off
 
-## Building
+## Running from Xcode
 
-Requires Xcode 16+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (the `.xcodeproj` is generated, not committed):
+### Prerequisites
 
-```bash
-brew install xcodegen
-git clone https://github.com/ashifkhn/Cairn.git
-cd Cairn
-xcodegen generate
-open Cairn.xcodeproj
-```
+- macOS with **Xcode 16+**
+- **[XcodeGen](https://github.com/yonaskolb/XcodeGen)** — `brew install xcodegen` (the `.xcodeproj` is generated from `project.yml`, not committed)
+- An **Apple ID** added to Xcode (**Settings ▸ Accounts**) for signing
+- To actually use the dash: an iPhone **and** a Royal Enfield Himalayan 450 / Guerrilla 450 with a Tripper dash
 
-Set your Apple Developer team (`DEVELOPMENT_TEAM` in `project.yml`) to run on a device.
+### Steps
+
+1. **Clone and generate the project:**
+   ```bash
+   brew install xcodegen
+   git clone https://github.com/ashifkhn/Cairn.git
+   cd Cairn
+   xcodegen generate
+   open Cairn.xcodeproj
+   ```
+   Re-run `xcodegen generate` whenever you add or remove files.
+
+2. **Let Swift Package Manager resolve dependencies.** On first open, Xcode fetches **MapLibre** (used for the dash basemap). Wait for "Package Resolution" to finish (**File ▸ Packages ▸ Resolve Package Versions** if needed).
+
+3. **Set signing.** Select the **Cairn** target ▸ **Signing & Capabilities**:
+   - Enable **Automatically manage signing**
+   - Pick your **Team** (a free personal Apple ID works)
+   - If the bundle id `com.cairn.dash` is already taken, change it to something unique (e.g. `com.<you>.cairn`) — also update `PRODUCT_BUNDLE_IDENTIFIER` in `project.yml` so it survives the next `xcodegen generate`
+
+4. **Choose a run destination** (toolbar):
+   - **Simulator** — the UI and the standalone features (Garage, Fuel, Expenses, Wallpaper, Navigate) run here. The dash link and screen-off streaming need a real device.
+   - **Your iPhone** — required to connect to the dash. On the first run, trust the developer certificate on the phone under **Settings ▸ General ▸ VPN & Device Management**.
+
+5. **Build & run** with **⌘R**. Run the unit tests with **⌘U**.
+
+### Using it with the dash (on-device)
+
+1. On the iPhone, join your dash's **`RE_…`** network in **Settings ▸ Wi-Fi** (password `12345678`).
+2. Open Cairn ▸ **Dash** tab, type the exact SSID, and tap **Connect + authenticate** — it authenticates over unicast and auto-projects to the dash.
+3. Grant **Always** location (powers screen-off streaming and navigation) and allow notifications (for expiry reminders).
 
 ### Signing notes
 
-- **Free (personal) Apple teams** can't use the Hotspot or Multicast entitlements, so Cairn joins the dash Wi-Fi **manually** (you join the `RE_` network in iOS Settings, password `12345678`, and type the SSID in-app) and uses **unicast** control. This works without a paid account.
+- **Free (personal) Apple teams** can't use the Hotspot or Multicast entitlements, so Cairn joins the dash Wi-Fi **manually** (you join the `RE_` network in iOS Settings and type the SSID in-app) and uses **unicast** control. This works without a paid account.
 - **Paid program** adds programmatic Wi-Fi join (`NEHotspotConfiguration`) and UDP broadcast (`com.apple.developer.networking.multicast`, requires Apple approval). The entitlements are pre-written and commented in `Cairn/Resources/Cairn.entitlements`.
 
 ## Status

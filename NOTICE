@@ -1,0 +1,23 @@
+Cairn
+Copyright 2026 Ashif Khan
+
+This product includes software developed as an independent, community project.
+
+The Royal Enfield Tripper dash link layer (the "K1G" Wi-Fi protocol: RSA-1024 +
+AES-256 handshake, H.264/RTP projection, control-plane packet layouts) is an
+independent Swift re-implementation whose protocol understanding is cross-checked
+against the following open-source projects, all licensed under Apache-2.0:
+
+  - NorthStar    — https://github.com/adityadasika21/NorthStar
+  - OpenDash     — https://github.com/subtlesayak/open-dash
+  - better-dash  — https://github.com/norbertFeron/better-dash
+
+These are interoperability facts (packet layouts observed on real hardware), not
+copied source.
+
+Trademarks / affiliation: Cairn is an independent community project and is NOT
+affiliated with, endorsed by, or supported by Royal Enfield. "Royal Enfield",
+"Himalayan", "Guerrilla", and "Tripper" are trademarks of their respective owners,
+used here only descriptively to identify compatible hardware. The dash link is
+unofficial and exists solely for interoperability with hardware you own — use at
+your own risk.

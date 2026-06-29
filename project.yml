@@ -1,0 +1,62 @@
+name: Cairn
+options:
+  bundleIdPrefix: com.cairn
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+packages:
+  MapLibre:
+    url: https://github.com/maplibre/maplibre-gl-native-distribution
+    from: "6.0.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""          # set your Apple Developer team here for device signing
+    SWIFT_STRICT_CONCURRENCY: minimal
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+
+targets:
+  Cairn:
+    type: application
+    platform: iOS
+    sources:
+      - path: Cairn
+    dependencies:
+      - package: MapLibre
+        product: MapLibre
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cairn.dash
+        INFOPLIST_FILE: Cairn/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Cairn/Resources/Cairn.entitlements
+        GENERATE_INFOPLIST_FILE: NO
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Automatic
+
+  CairnTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: CairnTests
+    dependencies:
+      - target: Cairn
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cairn.dash.tests
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  Cairn:
+    build:
+      targets:
+        Cairn: all
+        CairnTests: [test]
+    test:
+      targets:
+        - CairnTests

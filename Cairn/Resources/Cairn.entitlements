@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- EMPTY for personal (free) Apple teams: the Hotspot and Multicast entitlements
+         require the paid Apple Developer Program. Cairn works without them by:
+           • joining the RE_ dash manually in iOS Settings (no Hotspot entitlement), and
+           • using UNICAST control to 192.168.1.1:2000 (no Multicast entitlement).
+         When you enroll in the paid program, re-add these for auto-join + broadcast:
+           <key>com.apple.developer.networking.HotspotConfiguration</key><true/>
+           <key>com.apple.developer.networking.multicast</key><true/>          (needs Apple approval) -->
+</dict>
+</plist>

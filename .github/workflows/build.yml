@@ -1,19 +1,40 @@
-name: Build iOS IPA
+name: Generate and Build iOS App
+
 on:
-  workflow_dispatch: # Allows you to manually trigger the build
+  workflow_dispatch: # Allows you to manually click "Run" from your browser
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-14 # Uses Apple Silicon Mac runners in the cloud
     steps:
-      - name: Checkout Source
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: 'latest'
+      - [...](asc_slot://start-slot-8)name: Install XcodeGen
+        run: brew install xcodegen
 
-      - name: Build Xcode Project
+      - [...](asc_slot://start-slot-10)name: Generate Xcode Project File
+        run: xcodegen generate
+
+      - name: Compile and Build App
         run: |
-          xcodebuild -project Cairn.xcodeproj -scheme Cairn -configuration Release -sdk iphoneos clean build CODE_SIGNING_ALLOWED=NO
+          # Replace 'YourSchemeName' with the name of your app's build target
+          xcodebuild -project *.xcodeproj \
+                     -scheme YourSchemeName \
+                     -configuration Release \
+                     -sdk iphoneos \
+                     clean build \
+                     CODE_SIGNING_ALLOWED=NO \
+                     CONFIGURATION_BUILD_DIR=build
+
+      - name: Package App into an .ipa File
+        run: |
+          mkdir -p Payload
+          mv build/*.app Payload/
+          zip -r AppBundle.ipa Payload/
+
+      - name: Upload .ipa to GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: iPhone-Installable-App
+          path: AppBundle.ipa

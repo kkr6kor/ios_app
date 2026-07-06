@@ -1,40 +1,39 @@
-name: Generate and Build iOS App
+name: Build Cairn App for iOS
 
 on:
-  workflow_dispatch: # Allows you to manually click "Run" from your browser
+  workflow_dispatch: # Enables the manual "Run" button
 
 jobs:
   build:
-    runs-on: macos-14 # Uses Apple Silicon Mac runners in the cloud
+    runs-on: macos-14
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - [...](asc_slot://start-slot-8)name: Install XcodeGen
+      - name: Install XcodeGen
         run: brew install xcodegen
 
-      - [...](asc_slot://start-slot-10)name: Generate Xcode Project File
+      - name: Generate Project with XcodeGen
         run: xcodegen generate
 
-      - name: Compile and Build App
+      - name: Compile Cairn iOS App
         run: |
-          # Replace 'YourSchemeName' with the name of your app's build target
-          xcodebuild -project *.xcodeproj \
-                     -scheme YourSchemeName \
+          xcodebuild -project Cairn.xcodeproj \
+                     -scheme Cairn \
                      -configuration Release \
                      -sdk iphoneos \
                      clean build \
                      CODE_SIGNING_ALLOWED=NO \
                      CONFIGURATION_BUILD_DIR=build
 
-      - name: Package App into an .ipa File
+      - name: Package App into installable .ipa
         run: |
           mkdir -p Payload
-          mv build/*.app Payload/
-          zip -r AppBundle.ipa Payload/
+          mv build/Cairn.app Payload/
+          zip -r Cairn.ipa Payload/
 
-      - name: Upload .ipa to GitHub Artifacts
+      - name: Upload Finished IPA
         uses: actions/upload-artifact@v4
         with:
-          name: iPhone-Installable-App
-          path: AppBundle.ipa
+          name: Cairn-App-Installable
+          path: Cairn.ipa

@@ -1,0 +1,19 @@
+name: Build iOS IPA
+on:
+  workflow_dispatch: # Allows you to manually trigger the build
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 'latest'
+
+      - name: Build Xcode Project
+        run: |
+          xcodebuild -project Cairn.xcodeproj -scheme Cairn -configuration Release -sdk iphoneos clean build CODE_SIGNING_ALLOWED=NO

@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: macos-14
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -15,6 +16,28 @@ jobs:
 
       - name: Generate Project with XcodeGen
         run: xcodegen generate
+
+      # --- START OF OPTION B (DOWNGRADE FORMAT) ---
+      - name: Downgrade Xcode Project Format to Xcode 15 Compatibility
+        run: |
+          PBXPROJ_PATH="Cairn.xcodeproj/project.pbxproj"
+          
+          if [ -f "$PBXPROJ_PATH" ]; then
+            echo "Modifying $PBXPROJ_PATH to support Xcode 15.4..."
+            
+            # Remove Xcode 16 exclusive attributes safely
+            sed -i '' '/minimizedProjectReferenceProxies = 1;/d' "$PBXPROJ_PATH"
+            sed -i '' '/preferredProjectObjectVersion = 77;/d' "$PBXPROJ_PATH"
+            
+            # Change the internal object version from 77 (Xcode 16) to 56 (Xcode 14/15 compatible)
+            sed -i '' 's/objectVersion = 77;/objectVersion = 56;/g' "$PBXPROJ_PATH"
+            
+            echo "Successfully downgraded Xcode project format!"
+          else
+            echo "Error: $PBXPROJ_PATH not found. Ensure XcodeGen ran correctly."
+            exit 1
+          fi
+      # --- END OF OPTION B ---
 
       - name: Compile Cairn iOS App
         run: |
